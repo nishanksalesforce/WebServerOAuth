@@ -1,0 +1,5 @@
+<apex:page controller="AuthorizePageCtrl" sidebar="false" showHeader="false">
+    <apex:form >
+        <apex:commandButton action="{!authorize}" value="Authorize" />
+    </apex:form>
+</apex:page>

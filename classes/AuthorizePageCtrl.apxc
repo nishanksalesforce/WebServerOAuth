@@ -1,0 +1,21 @@
+public class AuthorizePageCtrl {
+    
+    public AuthorizePageCtrl(){
+        
+    }
+
+    public PageReference authorize() {
+        String hostName = URL.getSalesforceBaseUrl().toExternalForm();
+        String authURL ='/services/oauth2/authorize?'+
+            'client_id=YOUR_CLIENT_ID'+	// Add your OWN client ID
+            '&redirect_uri=YOUR_CALLBACK)URL'+	//Add your own Callback URL from Connected App.
+            '&response_type=code';
+        final PageReference target = new
+            PageReference(hostName+authURL);
+        target.setRedirect(true);
+        // This is a permanent redirection
+        target.setRedirectCode(301);
+        return target;    
+    }
+    
+}

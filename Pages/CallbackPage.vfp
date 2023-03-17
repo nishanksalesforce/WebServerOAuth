@@ -1,0 +1,10 @@
+<apex:page controller="CallbackPageCtrl" action="{!completeAuthorization}">
+    
+    Access Token: {!accessToken}
+    <br/>
+    Refresh Token: {!refreshToken}
+    
+    <apex:form >
+        <apex:commandButton action="{!refreshTokenAction}" value="Refresh Token" />
+    </apex:form>
+</apex:page>

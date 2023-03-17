@@ -1,0 +1,77 @@
+public class CallbackPageCtrl {
+    
+    public  String accessToken {get;set;}
+    public  String refreshToken {get;set;}
+    
+    public CallbackPageCtrl() {
+        
+    }
+    
+    public PageReference completeAuthorization(){
+        String hostName = URL.getSalesforceBaseUrl().toExternalForm();
+        
+        String code = ApexPages.currentPage().getParameters().get('code');
+        if(code != null && code != ''){
+            
+            String clientId='YOUR_CLIENT_ID';	// Add your OWN client ID
+            String clientSecret ='YOUR_CLIENT_Secret';	// Add your OWN client Secret
+            String callbackUrl = 'YOUR_CALLBACK)URL';	//Add your own Callback URL from Connected App
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(URL.getSalesforceBaseUrl().toExternalForm()+'/services/oauth2/token');
+            req.setMethod('POST');
+            req.setHeader('Content-type','application/x-www-form-urlencoded');
+            req.setBody('grant_type=authorization_code&'
+                        +'code='+code+'&'
+                        +'client_id='+clientId+'&'
+                        +'client_secret='+clientSecret+'&'
+                        +'redirect_uri='+callbackUrl);
+            Http h = new Http();
+            HttpResponse res = new HttpResponse();
+            
+            res = h.send(req);
+            if(res.getStatusCode() == 200){
+                Map<String,Object> responseMap = new Map<String,Object>();
+                responseMap = (Map<String,Object>)JSON.deserializeUntyped(res.getBody());
+                accessToken = String.valueof(responseMap.get('access_token'));
+                
+                refreshToken = responseMap.containsKey('refresh_token') ? (String)responseMap.get('refresh_token') : null;
+            }         
+        }
+        
+        return null;    
+    }
+    
+    public PageReference refreshTokenAction(){
+        
+        
+        String hostName = URL.getSalesforceBaseUrl().toExternalForm();
+        
+        if(refreshToken != null && refreshToken != ''){
+            
+            String clientId='YOUR_CLIENT_ID';	// Add your OWN client ID
+            String clientSecret ='YOUR_CLIENT_Secret';	// Add your OWN client Secret
+            String callbackUrl = 'YOUR_CALLBACK)URL';	//Add your own Callback URL from Connected App
+            HttpRequest req = new HttpRequest();
+            req.setEndpoint(URL.getSalesforceBaseUrl().toExternalForm()+'/services/oauth2/token');
+            req.setMethod('POST');
+            req.setHeader('Content-type','application/x-www-form-urlencoded');
+            req.setBody('grant_type=refresh_token&'
+                        +'refresh_token='+refreshToken+'&'
+                        +'client_id='+clientId+'&'
+                        +'client_secret='+clientSecret+'&'
+                        +'redirect_uri='+callbackUrl);
+            Http h = new Http();
+            HttpResponse res = new HttpResponse();
+            res = h.send(req);
+            if(res.getStatusCode() == 200){
+                Map<String,Object> responseMap = new Map<String,Object>();
+                responseMap = (Map<String,Object>)JSON.deserializeUntyped(res.getBody());
+                accessToken = String.valueof(responseMap.get('access_token'));
+                
+            }           
+        }  
+        return null;    
+        
+    }
+    
+}
